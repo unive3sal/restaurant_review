@@ -15,7 +15,7 @@ pub struct AddReviewContext<'info> {
     #[account(
         init,
         payer = signer,
-        space = ReviewContent::INIT_SPACE,
+        space = 8 + ReviewContent::INIT_SPACE,
         seeds = [b"review", signer.key().as_ref()],
         bump,
     )]
@@ -25,7 +25,9 @@ pub struct AddReviewContext<'info> {
 }
 
 pub fn add_review(ctx: Context<AddReviewContext>, content: ReviewInput) -> Result<()> {
+    let reviewer = ctx.accounts.signer.key;
     let review = &mut ctx.accounts.review_content;
+    review.reviewer = *reviewer;
     review.title = content.title;
     review.rating = content.rating;
     review.description = content.description;
